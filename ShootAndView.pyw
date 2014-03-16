@@ -43,12 +43,18 @@ if not os.path.exists(HOME_DIR+'/'+'ShootAndView'):
 HOME_DIR=HOME_DIR+'/ShootAndView/'
 #sys.stderr=open(HOME_DIR+'err.txt','w')
 
+
+
+
 if sys.platform=='win32':
 	root.iconbitmap('app/images/icon.ico')
 	#root.resizable(0,0)
 	root.state("zoomed")
 else:
 	root.geometry("%sx%s+0+0"%(root.winfo_screenwidth(),root.winfo_screenheight()))
+
+root.iconify()
+root.deiconify()
 
 class CreateImages:
 	def __init__(self):
