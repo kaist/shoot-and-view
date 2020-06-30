@@ -359,4 +359,4 @@ def multi_ping_query(hosts, timeout=1, step=512, ignore_errors=False):
 if __name__ == '__main__':
     # Testing
 
-    print do_one('192.168.0.16')
+    print(do_one('192.168.0.16'))

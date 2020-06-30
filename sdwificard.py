@@ -19,11 +19,11 @@
 
 import os
 import socket
-import thread
+import _thread
 import time
 import ping
-import Queue
-import urllib
+import queue
+import urllib.request, urllib.parse, urllib.error
 import sys
 
 
@@ -35,14 +35,14 @@ class SDCard:
 		self.card_ip=None
 		self.all_files=[]
 		
-		self.download_list=Queue.Queue()
+		self.download_list=queue.Queue()
 		self.in_queue=[]
 		
 
 		
 		
 	def find_card(self,callback=None):
-		thread.start_new_thread(self.find_card_thread,(callback,))
+		_thread.start_new_thread(self.find_card_thread,(callback,))
 
 		
 	def find_card_thread(self,callback=None):
@@ -59,7 +59,7 @@ class SDCard:
 
 
 
-			s.sendto('', ('<broadcast>', 55777))
+			s.sendto(b'', ('<broadcast>', 55777))
 			try:
 				resp=s.recv(400)
 				s.close()
@@ -78,9 +78,9 @@ class SDCard:
 			
 	def start_listen(self,callback=None,download_callback=None,download_complete=None):
 		self.listen_flag=True
-		thread.start_new_thread(self.listener_thread,(callback,))
-		thread.start_new_thread(self.ping_card,())
-		thread.start_new_thread(self.download_thread,(download_callback,download_complete))
+		_thread.start_new_thread(self.listener_thread,(callback,))
+		_thread.start_new_thread(self.ping_card,())
+		_thread.start_new_thread(self.download_thread,(download_callback,download_complete))
 		
 
 		
@@ -112,19 +112,19 @@ class SDCard:
 			if not self.download_list.empty():
 				fl=self.download_list.get(block=0)
 				self.download_now=fl
-				urllib.urlretrieve('http://%s/cgi-bin/wifi_download?fn=%s'%(self.card_ip,fl),self.home_dir+fl.split('/')[-1],download_callback if download_callback else None)
+				urllib.request.urlretrieve('http://%s/cgi-bin/wifi_download?fn=%s'%(self.card_ip,fl),self.home_dir+fl.split('/')[-1],download_callback if download_callback else None)
 				if download_complete:download_complete(self.download_now)
 			time.sleep(0.1)
 
 
 def monitor(ip):
 	if not ip:return
-	print 'Find card on ip:',ip
+	print(('Find card on ip:',ip))
 	sd.start_listen(download_complete=print_complete)
 	
 
 def print_complete(fname):
-	print 'New image: %s'%(HOME_DIR+fname.split('/')[-1])
+	print(('New image: %s'%(HOME_DIR+fname.split('/')[-1])))
 	
 		
 if __name__=='__main__':
@@ -145,7 +145,7 @@ if __name__=='__main__':
 	
 	
 	if options.ip:sd.ip=options.ip
-	print 'Finding sd card...'
+	print('Finding sd card...')
 	sd.find_card(callback=monitor)
 	
 	

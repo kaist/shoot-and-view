@@ -17,17 +17,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from Tkinter import *
-from ttk import *
+from tkinter import *
 import sdwificard
 import glob
-import ImageTk
+from PIL import ImageTk
 import os
-import Image
-import tkMessageBox
+from PIL import Image
 import sys
 
-
+from tkinter.ttk import * 
 
 if hasattr(sys,"frozen") and sys.frozen == "windows_exe":
     os.chdir(os.path.dirname(sys.executable))
@@ -149,7 +147,7 @@ class App:
 		self.edit_button.grid(row=0,column=1,padx=5,pady=5)
 
 	def delete_session(self):
-		if tkMessageBox.askyesno("Delete", "Delete last session and all images from computer (not camera)?"):
+		if messagebox.askyesno("Delete", "Delete last session and all images from computer (not camera)?"):
 			os.remove(HOME_DIR+'last_session.dat')
 			for x in os.listdir(HOME_DIR):
 				os.remove(HOME_DIR+x)
@@ -314,14 +312,14 @@ class App:
 		self.zoom_state=2
 		
 	def c_motion(self,event):
-		if self.zoom_state<>2:return
+		if self.zoom_state!=2:return
 		d_x,d_y=event.x-self.c_x,event.y-self.c_y
 		
 		self.canvas.move('img',d_x,d_y)
 		self.c_x,self.c_y=event.x,event.y		
 		
 	def c_press(self,event):
-		if self.zoom_state<>2:
+		if self.zoom_state!=2:
 			if self.zoom_state==1:
 				self.key_press_space()
 			return
