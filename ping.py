@@ -112,7 +112,7 @@ def checksum(source_string):
         this_val = ord(source_string[count + 1])*256+ord(source_string[count])
         sum = sum + this_val
         sum = sum & 0xffffffff # Necessary?
-        count = count + 2
+        count += 2
     if count_to < len(source_string):
         sum = sum + ord(source_string[len(source_string) - 1])
         sum = sum & 0xffffffff # Necessary?
@@ -204,14 +204,14 @@ def verbose_ping(dest_addr, timeout=2, count=4):
     Displays the result on the screen.
  
     """
-    for i in range(count):
-        print('ping {}...'.format(dest_addr))
+    for _ in range(count):
+        print(f'ping {dest_addr}...')
         delay = do_one(dest_addr, timeout)
-        if delay == None:
-            print('failed. (Timeout within {} seconds.)'.format(timeout))
+        if delay is None:
+            print(f'failed. (Timeout within {timeout} seconds.)')
         else:
             delay = round(delay * 1000.0, 4)
-            print('get ping in {} milliseconds.'.format(delay))
+            print(f'get ping in {delay} milliseconds.')
     print('')
  
  

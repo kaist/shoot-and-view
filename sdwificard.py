@@ -112,7 +112,11 @@ class SDCard:
 			if not self.download_list.empty():
 				fl=self.download_list.get(block=0)
 				self.download_now=fl
-				urllib.request.urlretrieve('http://%s/cgi-bin/wifi_download?fn=%s'%(self.card_ip,fl),self.home_dir+fl.split('/')[-1],download_callback if download_callback else None)
+				urllib.request.urlretrieve(
+				    f'http://{self.card_ip}/cgi-bin/wifi_download?fn={fl}',
+				    self.home_dir + fl.split('/')[-1],
+				    download_callback or None,
+				)
 				if download_complete:download_complete(self.download_now)
 			time.sleep(0.1)
 
@@ -124,31 +128,35 @@ def monitor(ip):
 	
 
 def print_complete(fname):
-	print(('New image: %s'%(HOME_DIR+fname.split('/')[-1])))
+	print(f"New image: {HOME_DIR + fname.split('/')[-1]}")
 	
 		
 if __name__=='__main__':
 	from optparse import OptionParser
 	parser = OptionParser()
 	parser.add_option("-d", "--dir", dest="dir",default=None,help="directory for storing images")
-	parser.add_option("-i", "--ip", dest="ip",default=None,help="ip address of the computer (default %s)"%(socket.gethostbyname(socket.gethostname())))
+	parser.add_option(
+	    "-i",
+	    "--ip",
+	    dest="ip",
+	    default=None,
+	    help=
+	    f"ip address of the computer (default {socket.gethostbyname(socket.gethostname())})",
+	)
 	(options, args) = parser.parse_args()
 
 	HOME_DIR=os.path.expanduser('~')
-	if not os.path.exists(HOME_DIR+'/'+'ShootAndView'):
-		os.mkdir(HOME_DIR+'/'+'ShootAndView')
-	HOME_DIR=HOME_DIR+'/ShootAndView/'
-	if options.dir:HOME_DIR=options.dir
-	
-	
+	if not os.path.exists(f'{HOME_DIR}/ShootAndView'):
+		os.mkdir(f'{HOME_DIR}/ShootAndView')
+	HOME_DIR = options.dir or f'{HOME_DIR}/ShootAndView/'
 	sd=SDCard(home_dir=HOME_DIR)	
-	
-	
+
+
 	if options.ip:sd.ip=options.ip
 	print('Finding sd card...')
 	sd.find_card(callback=monitor)
-	
-	
+
+
 	while 1:
 		time.sleep(1)
 		
